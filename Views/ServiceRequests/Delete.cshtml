@@ -1,39 +1,76 @@
 ﻿@model Global_Logistics_Management_System.Models.ServiceRequest
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Service Request";
 }
 
-<h1>Delete</h1>
+<div class="form-card col-md-8 mx-auto mt-4 text-center border-danger-subtle">
+    <div class="mb-4">
+        <i class="bi bi-patch-exclamation" style="font-size: 3rem; color: #dc3545;"></i>
+        <h1 class="form-title" style="color: #dc3545;">Remove Logistics Order?</h1>
+        <p class="form-subtitle">Are you sure you want to permanently delete <strong>Order #@Model.RequestId</strong>?</p>
+    </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ServiceRequest</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.JobDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.JobDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RequestDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RequestDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contract)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contract.Description)
-        </dd>
-    </dl>
-    
+    <div class="p-4 rounded-4 mb-4" style="background-color: #fff5f5; border: 1px solid #f8d7da;">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <i class="bi bi-truck-flatbed text-pink-theme" style="font-size: 2.5rem;"></i>
+            </div>
+            <div class="col-md-10 text-start">
+                <h5 class="fw-bold mb-1 text-pink-theme">Job Description</h5>
+                <p class="mb-2 text-muted">@Model.JobDescription</p>
+
+                <div class="d-flex gap-4 small text-dark fw-medium">
+                    <span>
+                        <i class="bi bi-clock me-1 text-secondary"></i>
+                        Logged: @Model.RequestDate.ToString("dd MMM yyyy")
+                    </span>
+                    <span>
+                        <i class="bi bi-file-text-fill me-1 text-secondary"></i>
+                        SLA: @(Model.Contract?.ContractName ?? "No Contract Associated")
+                    </span>
+                    <span class="text-success fw-bold">
+                        <i class="bi bi-cash-stack me-1"></i>
+                        Value: R @Model.Cost.ToString("N2")
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning rounded-4 border-0 mb-4" style="background-color: #fff3cd; color: #856404; font-size: 0.9rem; text-align: left;">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Warning:</strong> This action cannot be undone. Removing this request will completely clear all trackable local ZAR evaluation financial charts from the main operational database ledger.
+    </div>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="RequestId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+
+        <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">
+                <i class="bi bi-trash3-fill me-2"></i>Yes, Delete Request
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill fw-bold">
+                No, Keep the Order!
+            </a>
+        </div>
     </form>
 </div>
+
+<style>
+    /* Injected exact EventEase page style rules overrides */
+    .border-danger-subtle {
+        border: 2px solid #f8d7da !important;
+    }
+
+    .btn-danger {
+        background-color: #d32f2f;
+        border: none;
+        transition: transform 0.2s;
+    }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+</style>

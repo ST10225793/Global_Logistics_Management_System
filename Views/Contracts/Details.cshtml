@@ -1,48 +1,95 @@
 ﻿@model Global_Logistics_Management_System.Models.Contract
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Contract Details";
 }
 
-<h1>Details</h1>
+<div class="form-card col-md-8 mx-auto mt-4 text-center">
+    <div class="mb-4">
+        <i class="bi bi-magic" style="font-size: 3rem; color: #f06292;"></i>
+        <h1 class="form-title">@Model.ContractName</h1>
+        <p class="form-subtitle">A framework agreement profile baseline review </p>
+    </div>
 
-<div>
-    <h4>Contract</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CostUSD)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CostUSD)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Client)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Client.Email)
-        </dd>
-    </dl>
+    <hr style="border-top: 2px dashed #fce4ec;" />
+
+    <div class="row text-start mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #f06292;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-calendar-event-fill me-2"></i>Duration Matrix
+                </h6>
+                <p class="mb-0 small text-dark fw-medium">
+                    <strong>From:</strong> @Model.StartDate.ToString("dd MMMM yyyy") <br />
+                    <strong>To:</strong> @Model.EndDate.ToString("dd MMMM yyyy")
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #28a745;">
+                <h6 class="fw-bold text-success">
+                    <i class="bi bi-currency-dollar me-2"></i>Base Value (USD)
+                </h6>
+                <p class="mb-0 fs-5 fw-bold text-success">$@Model.CostUSD.ToString("N2")</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #880e4f;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-shield-check me-2"></i>Operational Status
+                </h6>
+                <div class="mt-1">
+                    <span class="badge @(Model.Status.ToString() == "Active" ? "bg-success" : "bg-warning text-dark")">
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #f06292;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-building me-2"></i>Associated Client Profile
+                </h6>
+                <div class="mt-1">
+                    <span class="badge" style="background-color: #fce4ec; color: #880e4f; border: 1px solid #f06292;">
+                        <i class="bi bi-envelope-heart me-1"></i> @(Model.Client?.Email ?? "Unassigned")
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="p-4 rounded-4" style="background-color: #fff0f3; border: 1px solid #fce4ec;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-chat-heart-fill me-2"></i>Agreement Details / Clauses
+                </h6>
+                <p class="mb-0 mt-2" style="line-height: 1.6;">
+                    @Model.Description
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-2">
+        <a asp-action="Edit" asp-route-id="@Model?.ContractId" class="btn btn-pink px-4">
+            <i class="bi bi-pencil-heart"></i> Edit Details
+        </a>
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Back to Tracking Registry
+        </a>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ContractId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    /* Exact EventEase card elevation configuration rules mapping */
+    .shadow-sm {
+        transition: transform 0.2s ease-in-out;
+    }
+
+        .shadow-sm:hover {
+            transform: translateY(-3px);
+        }
+</style>

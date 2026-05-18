@@ -1,39 +1,51 @@
 ﻿@model Global_Logistics_Management_System.Models.Client
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Client Profile";
 }
 
-<h1>Edit</h1>
+<div class="form-card text-center col-md-8 mx-auto mt-4">
+    <i class="bi bi-pencil-square" style="font-size: 3rem; color: #f06292;"></i>
+    <h1 class="form-title">Edit Client Profile</h1>
+    <p class="form-subtitle">Polishing information for <strong>@Model.Name</strong> 🎀</p>
 
-<h4>Client</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ClientId" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row text-start justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="ClientId" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label fw-bold" style="color: #880e4f;"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Email" class="control-label fw-bold" style="color: #880e4f;"></label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-pink w-100">
+                        <i class="bi bi-check2-heart"></i> Update Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Back to Directory
+        </a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

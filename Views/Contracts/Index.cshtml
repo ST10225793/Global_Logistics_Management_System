@@ -1,115 +1,129 @@
 ﻿@model IEnumerable<Global_Logistics_Management_System.Models.Contract>
 
 @{
-    ViewData["Title"] = "Contracts Index";
+    ViewData["Title"] = "Contracts Management";
 }
 
-<h1>Contracts</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-
-<form asp-action="Index" method="get" class="bg-light p-3 rounded mb-4">
-    <div class="row align-items-end">
-        <div class="col-md-3">
-            <label class="form-label font-weight-bold">Start Date From:</label>
-            <input type="date" name="filterStartDate" value="@ViewBag.CurrentStartDate" class="form-control" />
-        </div>
-        <div class="col-md-3">
-            <label class="form-label font-weight-bold">End Date To:</label>
-            <input type="date" name="filterEndDate" value="@ViewBag.CurrentEndDate" class="form-control" />
-        </div>
-        <div class="col-md-3">
-            <label class="form-label font-weight-bold">Contract Status:</label>
-            <select name="filterStatus" class="form-control" asp-items="Html.GetEnumSelectList<Global_Logistics_Management_System.Models.ContractStatus>()">
-                <option value="">-- All Statuses --</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-info text-white w-100">Filter Contracts</button>
-            <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Clear Filters</a>
-        </div>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-pink alert-dismissible fade show" role="alert">
+        <strong>Hold on! 🎀</strong> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-toggle="alert" aria-label="Close"></button>
     </div>
-</form>
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ContractName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CostUSD)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceLevel)
-            </th>
-            <th>
-                Signed Contract
-            </th>
-            <th>
-                Client Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ContractName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CostUSD)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ServiceLevel)
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.SignedAgreementPath))
-                    {
-                        <a href="~/uploads/@item.SignedAgreementPath" target="_blank" class="btn btn-sm btn-outline-danger">Download PDF</a>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No File</span>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Client.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ContractId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="form-card mt-4">
+    <div class="text-center mb-4">
+        <i class="bi bi-file-earmark-text-fill" style="font-size: 3rem; color: #f06292;"></i>
+        <h1 class="form-title">Service Level Agreements</h1>
+        <p class="form-subtitle">Track baseline framework timelines and logistics financials with style! ✨</p>
+    </div>
+
+    <form asp-action="Index" method="get" class="p-3 rounded mb-4 border-pink border" style="background-color: #fffafb;">
+        <div class="row align-items-end text-start">
+            <div class="col-md-3 mb-2">
+                <label class="form-label fw-bold small" style="color: #880e4f;">Start Date From:</label>
+                <input type="date" name="filterStartDate" value="@ViewBag.CurrentStartDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label fw-bold small" style="color: #880e4f;">End Date To:</label>
+                <input type="date" name="filterEndDate" value="@ViewBag.CurrentEndDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3 mb-2">
+                <label class="form-label fw-bold small" style="color: #880e4f;">Contract Status:</label>
+                <select name="filterStatus" class="form-select form-select-sm" asp-items="Html.GetEnumSelectList<Global_Logistics_Management_System.Models.ContractStatus>()">
+                    <option value="">-- All Statuses --</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-2 d-flex gap-2">
+                <button type="submit" class="btn btn-pink btn-sm w-100">Filter</button>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm w-100">Clear</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 style="color: #880e4f;">Active Registry</h4>
+        <a asp-action="Create" class="btn btn-pink">
+            <i class="bi bi-plus-circle"></i> Create New Contract
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead style="background-color: #fffafb;">
+                <tr style="color: #880e4f;">
+                    <th>@Html.DisplayNameFor(model => model.ContractName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Description)</th>
+                    <th>Duration Matrix</th>
+                    <th>Value (USD)</th>
+                    <th>Status</th>
+                    <th>@Html.DisplayNameFor(model => model.ServiceLevel)</th>
+                    <th>Signed PDF</th>
+                    <th>Assigned Client</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold" style="color: #f06292;">
+                            @Html.DisplayFor(modelItem => item.ContractName)
+                        </td>
+                        <td class="text-truncate small" style="max-width: 150px;" title="@item.Description">
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td class="small">
+                            <i class="bi bi-calendar-range me-1"></i>
+                            @item.StartDate.ToString("dd MMM yy") - @item.EndDate.ToString("dd MMM yy")
+                        </td>
+                        <td>
+                            <i class="bi bi-currency-dollar me-1"></i>
+                            @item.CostUSD.ToString("N2")
+                        </td>
+                        <td>
+                            <span class="badge @(item.Status.ToString() == "Active" ? "bg-success" : "bg-warning text-dark")">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td class="small">
+                            @Html.DisplayFor(modelItem => item.ServiceLevel)
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.SignedAgreementPath))
+                            {
+                                <a href="~/uploads/@item.SignedAgreementPath" target="_blank" class="btn btn-xs btn-outline-danger py-1 px-2 small" style="font-size: 0.75rem; border-radius: 10px;">
+                                    <i class="bi bi-file-pdf-fill"></i> PDF
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small italic">No File</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: #fce4ec; color: #880e4f; border: 1px solid #f06292;">
+                                <i class="bi bi-building me-1"></i>
+                                @(item.Client?.Name ?? "Unassigned")
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.ContractId" class="btn btn-sm btn-outline-pink">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.ContractId" class="btn btn-sm btn-outline-secondary ms-1">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.ContractId" class="btn btn-sm btn-outline-danger ms-1">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

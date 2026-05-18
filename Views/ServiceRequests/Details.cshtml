@@ -1,36 +1,88 @@
 ﻿@model Global_Logistics_Management_System.Models.ServiceRequest
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Service Request Details";
 }
 
-<h1>Details</h1>
+<div class="form-card col-md-8 mx-auto mt-4 text-center">
+    <div class="mb-4">
+        <i class="bi bi-magic" style="font-size: 3rem; color: #f06292;"></i>
+        <h1 class="form-title">Order Details</h1>
+        <p class="form-subtitle">Reviewing operational parameters for <strong>Order #@Model.RequestId</strong></p>
+    </div>
 
-<div>
-    <h4>ServiceRequest</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.JobDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.JobDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RequestDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RequestDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contract)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contract.Description)
-        </dd>
-    </dl>
+    <hr style="border-top: 2px dashed #fce4ec;" />
+
+    <div class="row text-start mt-4">
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #f06292;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-calendar-event-fill me-2"></i>Request Date
+                </h6>
+                <p class="mb-0">@Model.RequestDate.ToString("dddd, dd MMMM yyyy")</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #28a745;">
+                <h6 class="fw-bold text-success">
+                    <i class="bi bi-cash-stack me-2"></i>Calculated Cost (ZAR)
+                </h6>
+                <p class="mb-0 fw-bold">
+                    @if (Model.Cost > 0)
+                    {
+                        <span>R @Model.Cost.ToString("N2")</span>
+                    }
+                    else if (Model.Contract != null)
+                    {
+                        <span class="text-muted">R @((Model.Contract.CostUSD * 18.50m).ToString("N2")) *</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No Evaluation Linked</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <div class="p-3 rounded-4 shadow-sm" style="background-color: #fffafb; border-left: 5px solid #880e4f;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-file-earmark-text-fill me-2"></i>Linked Contract Name
+                </h6>
+                <p class="mb-0 text-muted">@(Model.Contract?.ContractName ?? "No baseline contract associated with this order.")</p>
+            </div>
+        </div>
+
+        <div class="col-12 mb-4">
+            <div class="p-4 rounded-4" style="background-color: #fff0f3; border: 1px solid #fce4ec;">
+                <h6 class="fw-bold" style="color: #880e4f;">
+                    <i class="bi bi-chat-heart-fill me-2"></i>Job Description
+                </h6>
+                <p class="mb-0 mt-2" style="line-height: 1.6;">
+                    @Model.JobDescription
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-2">
+        <a asp-action="Edit" asp-route-id="@Model?.RequestId" class="btn btn-pink px-4">
+            <i class="bi bi-pencil-heart"></i> Edit Parameters
+        </a>
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left-circle"></i> Back to Schedule
+        </a>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.RequestId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    /* Injected hover pop animations matching the layout sheet */
+    .shadow-sm {
+        transition: transform 0.2s ease-in-out;
+    }
+
+        .shadow-sm:hover {
+            transform: translateY(-3px);
+        }
+</style>

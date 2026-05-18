@@ -1,51 +1,80 @@
 ﻿@model Global_Logistics_Management_System.Models.Contract
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Contract";
 }
 
-<h1>Delete</h1>
+<div class="form-card col-md-8 mx-auto mt-4 text-center border-danger-subtle">
+    <div class="mb-4">
+        <i class="bi bi-patch-exclamation" style="font-size: 3rem; color: #dc3545;"></i>
+        <h1 class="form-title" style="color: #dc3545;">Terminate Contract Agreement?</h1>
+        <p class="form-subtitle">Are you sure you want to permanently delete <strong>@Model.ContractName</strong>?</p>
+    </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Contract</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CostUSD)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CostUSD)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Client)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Client.Email)
-        </dd>
-    </dl>
-    
+    <div class="p-4 rounded-4 mb-4" style="background-color: #fff5f5; border: 1px solid #f8d7da;">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <i class="bi bi-folder-x text-pink-theme" style="font-size: 2.5rem;"></i>
+            </div>
+            <div class="col-md-10 text-start">
+                <h5 class="fw-bold mb-1 text-pink-theme">@Model.ContractName</h5>
+                <p class="mb-2 text-muted">@Model.Description</p>
+
+                <div class="d-flex gap-4 small text-dark fw-medium flex-wrap">
+                    <span>
+                        <i class="bi bi-calendar-range me-1 text-secondary"></i>
+                        Timeline: @Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")
+                    </span>
+                    <span>
+                        <i class="bi bi-building me-1 text-secondary"></i>
+                        Client: @(Model.Client?.Name ?? "No Client Linked")
+                    </span>
+                    <span class="text-danger fw-bold">
+                        <i class="bi bi-currency-dollar me-1"></i>
+                        Value: $@Model.CostUSD.ToString("N2")
+                    </span>
+                    <span>
+                        <i class="bi bi-shield-check me-1 text-secondary"></i>
+                        Status: @Model.Status
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning rounded-4 border-0 mb-4" style="background-color: #fff3cd; color: #856404; font-size: 0.9rem; text-align: left;">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Warning:</strong> Cascading action restriction! Removing this baseline framework agreement will completely detach or break any linked operational Service Requests and real-time live currency ledger rows stored downstream.
+    </div>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="ContractId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+
+        <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">
+                <i class="bi bi-trash3-fill me-2"></i>Yes, Delete Contract
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill fw-bold">
+                No, Keep the Plans!
+            </a>
+        </div>
     </form>
 </div>
+
+<style>
+    /* Injected exact EventEase page style rules overrides */
+    .border-danger-subtle {
+        border: 2px solid #f8d7da !important;
+    }
+
+    .btn-danger {
+        background-color: #d32f2f;
+        border: none;
+        transition: transform 0.2s;
+    }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+</style>

@@ -4,62 +4,86 @@
     ViewData["Title"] = "Service Requests Index";
 }
 
-<h1>Index</h1>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-pink alert-dismissible fade show" role="alert">
+        <strong>Hold on! 🎀</strong> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-toggle="alert" aria-label="Close"></button>
+    </div>
+}
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.JobDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RequestDate)
-            </th>
-            <th>
-                Calculated Cost (ZAR)
-            </th>
-            <th>
-                Contract Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JobDescription)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RequestDate)
-                </td>
-                <td>
-                    @if (item.Cost > 0)
-                    {
-                        <span>R @item.Cost.ToString("N2")</span>
-                    }
-                    else if (item.Contract != null)
-                    {
-                        <span>R @((item.Contract.CostUSD * 18.50m).ToString("N2")) *</span>
-                    }
-                    else
-                    {
-                        <span class="text-danger">No Contract Linked</span>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Contract.ContractName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.RequestId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.RequestId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.RequestId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="form-card mt-4">
+    <div class="text-center mb-4">
+        <i class="bi bi-truck" style="font-size: 3rem; color: #f06292;"></i>
+        <h1 class="form-title">Service Logistic Orders</h1>
+        <p class="form-subtitle">Track workflow updates and real-time converted valuations! ✨</p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 style="color: #880e4f;">Operational Commitments</h4>
+        <a asp-action="Create" class="btn btn-pink">
+            <i class="bi bi-plus-circle"></i> Create New Request
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead style="background-color: #fffafb;">
+                <tr style="color: #880e4f;">
+                    <th>@Html.DisplayNameFor(model => model.JobDescription)</th>
+                    <th>@Html.DisplayNameFor(model => model.RequestDate)</th>
+                    <th>Calculated Cost (ZAR)</th>
+                    <th style="color: #f06292 !important;">Linked Contract Name</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-truncate" style="color: #f06292; max-width: 250px;">
+                            @Html.DisplayFor(modelItem => item.JobDescription)
+                        </td>
+                        <td>
+                            <i class="bi bi-clock-history me-1"></i>
+                            @item.RequestDate.ToString("dd MMM yyyy")
+                        </td>
+                        <td class="fw-bold">
+                            @if (item.Cost > 0)
+                            {
+                                <span>R @item.Cost.ToString("N2")</span>
+                            }
+                            else if (item.Contract != null)
+                            {
+                                <span class="text-muted">R @((item.Contract.CostUSD * 18.50m).ToString("N2")) *</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger small">No Contract Context</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: #fce4ec; color: #880e4f; border: 1px solid #f06292;">
+                                <i class="bi bi-file-text-fill me-1"></i>
+                                @Html.DisplayFor(modelItem => item.Contract.ContractName)
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.RequestId" class="btn btn-sm btn-outline-pink" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.RequestId" class="btn btn-sm btn-outline-secondary ms-1" title="Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.RequestId" class="btn btn-sm btn-outline-danger ms-1" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

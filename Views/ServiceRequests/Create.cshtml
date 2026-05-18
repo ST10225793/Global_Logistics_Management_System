@@ -1,54 +1,59 @@
 ﻿@model Global_Logistics_Management_System.Models.ServiceRequest
 
 @{
-    ViewData["Title"] = "Create Service Request";
+    ViewData["Title"] = "Create Magical Service Request";
 }
 
-<h1>Create</h1>
+<div class="form-card text-center col-md-8 mx-auto mt-4">
+    <i class="bi bi-stars" style="font-size: 3rem; color: #f06292;"></i>
+    <h1 class="form-title">Create Service Request</h1>
+    <p class="form-subtitle">Let's schedule a] beautiful operational milestone! </p>
 
-<h4>Service Request</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row text-start justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="JobDescription" class="control-label"></label>
-                <textarea asp-for="JobDescription" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="JobDescription" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ContractId" class="control-label">Link to Contract</label>
-                <select asp-for="ContractId" class="form-control" asp-items="ViewBag.ContractId">
-                    <option value="">-- Select Contract --</option>
-                </select>
-                <span asp-validation-for="ContractId" class="text-danger"></span>
-            </div>
-
-            <div class="card p-3 bg-light mb-3">
-                <h5 class="text-secondary">Currency Converter (Live API)</h5>
-
-                <div class="form-group mb-2">
-                    <label class="control-label fw-bold">Amount (USD $):</label>
-                    <input type="number" id="inputUSD" class="form-control" placeholder="Type dollar amount..." step="0.01" />
+                <div class="form-group mb-3">
+                    <label asp-for="JobDescription" class="control-label fw-bold" style="color: #880e4f;"></label>
+                    <textarea asp-for="JobDescription" class="form-control" rows="3" placeholder="Describe the deployment magic..."></textarea>
+                    <span asp-validation-for="JobDescription" class="text-danger"></span>
                 </div>
 
-                <div class="form-group mb-2">
-                    <label asp-for="Cost" class="control-label fw-bold">Calculated Cost (ZAR R):</label>
-                    <input asp-for="Cost" id="inputZAR" class="form-control text-success fw-bold" readonly placeholder="R 0.00" />
-                    <span asp-validation-for="Cost" class="text-danger"></span>
+                <div class="form-group mb-4">
+                    <label asp-for="ContractId" class="control-label fw-bold" style="color: #880e4f;">Link Framework Contract</label>
+                    <select asp-for="ContractId" class="form-control" asp-items="ViewBag.ContractId">
+                        <option value="">-- Select Target Contract Alignment --</option>
+                    </select>
+                    <span asp-validation-for="ContractId" class="text-danger"></span>
                 </div>
 
-                <small id="rateIndicator" class="text-muted">Fetching live conversion metrics via HttpClient...</small>
-            </div>
+                <div class="card p-3 bg-light mb-4 border-pink border">
+                    <h5 class="fw-bold text-pink-theme">Currency Converter (Live API)</h5>
 
-            <div class="form-group">
-                <input type="submit" value="Submit Request" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
-            </div>
-        </form>
+                    <div class="form-group mb-2">
+                        <label class="control-label fw-bold text-muted">Amount (USD $):</label>
+                        <input type="number" id="inputUSD" class="form-control" placeholder="Type baseline dollar cost fractions..." step="0.01" />
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label asp-for="Cost" class="control-label fw-bold text-muted">Calculated Evaluation (ZAR R):</label>
+                        <input asp-for="Cost" id="inputZAR" class="form-control text-success fw-bold" readonly placeholder="R 0.00" />
+                        <span asp-validation-for="Cost" class="text-danger"></span>
+                    </div>
+
+                    <small id="rateIndicator" class="text-muted italic">Pinging real-time exchange metrics via HttpClient...</small>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="Dispatch Request ✨" class="btn btn-pink w-100" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-action="Index" class="btn-back"><i class="bi bi-arrow-left-circle"></i> Back to the Operational Schedule</a>
     </div>
 </div>
 
