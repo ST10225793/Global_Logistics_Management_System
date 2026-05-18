@@ -22,12 +22,9 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Recursively searches all directories and subfolders to find and restore all project files
+    # Direct target paths using forward-slashes for seamless cross-platform compatibility
     - name: Restore Project Dependencies
-      run: |
-        dotnet restore $(find . -name "*.sln" | head -n 1)
+      run: dotnet restore "Global Logistics Management System/Global Logistics Management System.sln"
 
-    # Compiles the nested solution structure cleanly in Release mode
     - name: Build Solution
-      run: |
-        dotnet build $(find . -name "*.sln" | head -n 1) --configuration Release --no-restore
+      run: dotnet build "Global Logistics Management System/Global Logistics Management System.sln" --configuration Release --no-restore
