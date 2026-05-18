@@ -22,10 +22,12 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Dynamically restores all dependencies across the entire workspace directory
+    # Recursively searches all directories and subfolders to find and restore all project files
     - name: Restore Project Dependencies
-      run: dotnet restore
+      run: |
+        dotnet restore $(find . -name "*.sln" | head -n 1)
 
-    # Compiles both projects matching your exact folder structures perfectly
+    # Compiles the nested solution structure cleanly in Release mode
     - name: Build Solution
-      run: dotnet build --configuration Release --no-restore
+      run: |
+        dotnet build $(find . -name "*.sln" | head -n 1) --configuration Release --no-restore
