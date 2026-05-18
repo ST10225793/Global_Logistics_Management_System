@@ -22,10 +22,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Removing arguments forces .NET to handle project discovery internally, bypassing Bash entirely
+    # 1. Point directly to the web app project file inside its specific subfolder
     - name: Restore Application Dependencies
-      run: dotnet restore
+      run: dotnet restore "Global Logistics Management System/Global Logistics Management System.csproj"
 
-    # Compiles the discovered projects while ignoring the broken relative paths in the solution file
+    # 2. Build the web app project file directly, completely bypassing the broken .sln mappings
     - name: Build Application Project
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build "Global Logistics Management System/Global Logistics Management System.csproj" --configuration Release --no-restore
