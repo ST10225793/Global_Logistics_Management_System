@@ -22,9 +22,11 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # The '"..."' pattern forces Linux bash to honor space characters as a single path string
+    # Sets the execution context directly inside the target directory to bypass space bugs
     - name: Restore Application Dependencies
-      run: dotnet restore '"Global Logistics Management System/Global Logistics Management System.csproj"'
+      working-directory: ./Global Logistics Management System
+      run: dotnet restore
 
     - name: Build Application Project
-      run: dotnet build '"Global Logistics Management System/Global Logistics Management System.csproj"' --configuration Release --no-restore --no-dependencies
+      working-directory: ./Global Logistics Management System
+      run: dotnet build --configuration Release --no-restore --no-dependencies
