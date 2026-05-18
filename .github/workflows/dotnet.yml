@@ -22,10 +22,11 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # 1. Point directly to the web app project file inside its specific subfolder
+    # The pipe character (|) preserves the literal inner quotes for the Linux shell execution
     - name: Restore Application Dependencies
-      run: dotnet restore "Global Logistics Management System/Global Logistics Management System.csproj"
+      run: |
+        dotnet restore "Global Logistics Management System/Global Logistics Management System.csproj"
 
-    # 2. Build the web app project file directly, completely bypassing the broken .sln mappings
     - name: Build Application Project
-      run: dotnet build "Global Logistics Management System/Global Logistics Management System.csproj" --configuration Release --no-restore
+      run: |
+        dotnet build "Global Logistics Management System/Global Logistics Management System.csproj" --configuration Release --no-restore
