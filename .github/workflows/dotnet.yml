@@ -22,9 +22,9 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Using workspace variables ensures Linux reads the spaces as a single safe path string
+    # Dynamically targets the first matching solution structure in the folder root
     - name: Restore Project Dependencies
-      run: dotnet restore "${{ github.workspace }}/Global Logistics Management System.sln"
+      run: dotnet restore *.sln
 
     - name: Build Solution
-      run: dotnet build "${{ github.workspace }}/Global Logistics Management System.sln" --configuration Release --no-restore
+      run: dotnet build *.sln --configuration Release --no-restore
