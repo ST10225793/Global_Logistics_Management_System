@@ -22,10 +22,9 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # This searches your repository automatically for any solution (.sln) file to prevent path drops
+    # Hardcoded direct path to bypass directory whitespace execution limits
     - name: Restore Project Dependencies
-      run: dotnet restore $(find . -name "*.sln" | head -n 1)
+      run: dotnet restore "./Global Logistics Management System.sln"
 
-    # Compiles the solution matching your repository configuration precisely
     - name: Build Solution
-      run: dotnet build $(find . -name "*.sln" | head -n 1) --configuration Release --no-restore
+      run: dotnet build "./Global Logistics Management System.sln" --configuration Release --no-restore
