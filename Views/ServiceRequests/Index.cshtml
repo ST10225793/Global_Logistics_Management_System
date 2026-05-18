@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Global_Logistics_Management_System.Models.ServiceRequest>
+
+@{
+    ViewData["Title"] = "Service Requests Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.JobDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestDate)
+            </th>
+            <th>
+                Calculated Cost (ZAR)
+            </th>
+            <th>
+                Contract Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestDate)
+                </td>
+                <td>
+                    @if (item.Cost > 0)
+                    {
+                        <span>R @item.Cost.ToString("N2")</span>
+                    }
+                    else if (item.Contract != null)
+                    {
+                        <span>R @((item.Contract.CostUSD * 18.50m).ToString("N2")) *</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">No Contract Linked</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contract.ContractName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RequestId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.RequestId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.RequestId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

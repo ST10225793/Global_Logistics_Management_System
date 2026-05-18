@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Global_Logistics_Management_System.Models.Contract>
+
+@{
+    ViewData["Title"] = "Contracts Index";
+}
+
+<h1>Contracts</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<form asp-action="Index" method="get" class="bg-light p-3 rounded mb-4">
+    <div class="row align-items-end">
+        <div class="col-md-3">
+            <label class="form-label font-weight-bold">Start Date From:</label>
+            <input type="date" name="filterStartDate" value="@ViewBag.CurrentStartDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label font-weight-bold">End Date To:</label>
+            <input type="date" name="filterEndDate" value="@ViewBag.CurrentEndDate" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label font-weight-bold">Contract Status:</label>
+            <select name="filterStatus" class="form-control" asp-items="Html.GetEnumSelectList<Global_Logistics_Management_System.Models.ContractStatus>()">
+                <option value="">-- All Statuses --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-info text-white w-100">Filter Contracts</button>
+            <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Clear Filters</a>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ContractName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CostUSD)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceLevel)
+            </th>
+            <th>
+                Signed Contract
+            </th>
+            <th>
+                Client Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContractName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostUSD)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceLevel)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.SignedAgreementPath))
+                    {
+                        <a href="~/uploads/@item.SignedAgreementPath" target="_blank" class="btn btn-sm btn-outline-danger">Download PDF</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No File</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Client.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ContractId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ContractId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ContractId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
