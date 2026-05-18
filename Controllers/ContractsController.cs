@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,33 +24,32 @@ namespace Global_Logistics_Management_System.Controllers
         // GET: Contracts
         public async Task<IActionResult> Index(DateTime? filterStartDate, DateTime? filterEndDate, ContractStatus? filterStatus)
         {
-            // 1. Start with a base LINQ query including the Client table
+            // 1. Base query incorporating relational Client entities
             var contractsQuery = _context.Contracts.Include(c => c.Client).AsQueryable();
 
-            // 2. LINQ Filter: Status Dropdown
+            // 2. Status Dropdown Evaluation
             if (filterStatus.HasValue)
             {
                 contractsQuery = contractsQuery.Where(c => c.Status == filterStatus.Value);
             }
 
-            // 3. LINQ Filter: Start Date (Contracts starting on or after this date)
+            // 3. Start Date Evaluation Matrix
             if (filterStartDate.HasValue)
             {
                 contractsQuery = contractsQuery.Where(c => c.StartDate >= filterStartDate.Value);
             }
 
-            // 4. LINQ Filter: End Date (Contracts ending on or before this date)
+            // 4. End Date Evaluation Matrix
             if (filterEndDate.HasValue)
             {
                 contractsQuery = contractsQuery.Where(c => c.EndDate <= filterEndDate.Value);
             }
 
-            // Pass the selected filters back to the view using ViewBag so the form inputs don't reset clear after clicking search
+            // Maintain state inside ViewBag hooks to prevent client inputs resetting after filter dispatch
             ViewBag.CurrentStartDate = filterStartDate?.ToString("yyyy-MM-dd");
             ViewBag.CurrentEndDate = filterEndDate?.ToString("yyyy-MM-dd");
             ViewBag.CurrentStatus = filterStatus;
 
-            // 5. Execute the query and send the filtered list to the view
             return View(await contractsQuery.ToListAsync());
         }
 
@@ -63,6 +64,7 @@ namespace Global_Logistics_Management_System.Controllers
             var contract = await _context.Contracts
                 .Include(c => c.Client)
                 .FirstOrDefaultAsync(m => m.ContractId == id);
+
             if (contract == null)
             {
                 return NotFound();
@@ -79,36 +81,58 @@ namespace Global_Logistics_Management_System.Controllers
         }
 
         // POST: Contracts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ContractId,ContractName,Description,Status,ServiceLevel,StartDate,EndDate,CostUSD,ClientId")] Contract contract, IFormFile pdfFile)
+        public async Task<IActionResult> Create([Bind("ContractId,ContractName,Description,Status,ServiceLevel,StartDate,EndDate,CostUSD,ClientId")] Contract contract, IFormFile? pdfFile)
         {
-            if (!ModelState.IsValid)
+            // --- BUSINESS RULE WORKFLOW & FILE VALIDATION LAYER ---
+
+            // Rule A: Enforce timeline boundaries gracefully
+            if (contract.StartDate >= contract.EndDate)
             {
-                // list every error in your Visual Studio "Output" window
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
+                ModelState.AddModelError("EndDate", "Validation Rule: The contract end date must fall after the starting initialization timestamp.");
+            }
+
+            // Rule B: Enforce file handling policies (Strict PDF constraints with UUID renaming)
+            if (pdfFile != null && pdfFile.Length > 0)
+            {
+                var fileExtension = Path.GetExtension(pdfFile.FileName).ToLower();
+                if (fileExtension != ".pdf")
                 {
-                    System.Diagnostics.Debug.WriteLine("ENTITY ERROR: " + error.ErrorMessage);
+                    ModelState.AddModelError("", "Security Breach Blocked: Only official .pdf documentation layout files are accepted.");
+                }
+                else
+                {
+                    // Generate a distinct UUID string to protect host tracking structures from overwrites
+                    var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                    var targetUploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                    if (!Directory.Exists(targetUploadFolder))
+                    {
+                        Directory.CreateDirectory(targetUploadFolder);
+                    }
+
+                    var serverSavePath = Path.Combine(targetUploadFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(serverSavePath, FileMode.Create))
+                    {
+                        await pdfFile.CopyToAsync(fileStream);
+                    }
+
+                    // Save clean location path variables directly inside database object tracking fields
+                    contract.SignedAgreementPath = uniqueFileName;
                 }
             }
 
-            if (pdfFile != null && pdfFile.Length > 0)
+            // Output diagnostic debug validation alerts directly to IDE output panels if invalid 
+            if (!ModelState.IsValid)
             {
-                // 1. Create a unique filename
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(pdfFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-                // 2. Save file to server
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                foreach (var stateItem in ModelState.Values)
                 {
-                    await pdfFile.CopyToAsync(stream);
+                    foreach (var validationError in stateItem.Errors)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"BUSINESS CRITERIA EXCEPTION: {validationError.ErrorMessage}");
+                    }
                 }
-
-                // 3. Save the path to the database object
-                contract.SignedAgreementPath = fileName;
             }
 
             if (ModelState.IsValid)
@@ -117,6 +141,7 @@ namespace Global_Logistics_Management_System.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Email", contract.ClientId);
             return View(contract);
         }
@@ -134,13 +159,12 @@ namespace Global_Logistics_Management_System.Controllers
             {
                 return NotFound();
             }
+
             ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Email", contract.ClientId);
             return View(contract);
         }
 
         // POST: Contracts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ContractId,ContractName,Description,Status,ServiceLevel,StartDate,EndDate,CostUSD,ClientId,SignedAgreementPath")] Contract contract, IFormFile? pdfFile)
@@ -150,19 +174,39 @@ namespace Global_Logistics_Management_System.Controllers
                 return NotFound();
             }
 
-            // Process a replacement PDF file if uploaded
+            // Timeline boundary verification checks
+            if (contract.StartDate >= contract.EndDate)
+            {
+                ModelState.AddModelError("EndDate", "Validation Rule: The contract end date must fall after the starting initialization timestamp.");
+            }
+
+            // Check if user is uploading a replacement SLA document context sheet
             if (pdfFile != null && pdfFile.Length > 0)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(pdfFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var fileExtension = Path.GetExtension(pdfFile.FileName).ToLower();
+                if (fileExtension != ".pdf")
                 {
-                    await pdfFile.CopyToAsync(stream);
+                    ModelState.AddModelError("", "Security Breach Blocked: Only official .pdf documentation layout files are accepted.");
                 }
+                else
+                {
+                    // Generate new unique UUID string identifier
+                    var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                    var targetUploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-                // Assign new file path
-                contract.SignedAgreementPath = fileName;
+                    if (!Directory.Exists(targetUploadFolder))
+                    {
+                        Directory.CreateDirectory(targetUploadFolder);
+                    }
+
+                    var serverSavePath = Path.Combine(targetUploadFolder, uniqueFileName);
+                    using (var fileStream = new FileStream(serverSavePath, FileMode.Create))
+                    {
+                        await pdfFile.CopyToAsync(fileStream);
+                    }
+
+                    contract.SignedAgreementPath = uniqueFileName;
+                }
             }
 
             if (ModelState.IsValid)
@@ -185,7 +229,8 @@ namespace Global_Logistics_Management_System.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Name", contract.ClientId);
+
+            ViewData["ClientId"] = new SelectList(_context.Clients, "ClientId", "Email", contract.ClientId);
             return View(contract);
         }
 
@@ -200,6 +245,7 @@ namespace Global_Logistics_Management_System.Controllers
             var contract = await _context.Contracts
                 .Include(c => c.Client)
                 .FirstOrDefaultAsync(m => m.ContractId == id);
+
             if (contract == null)
             {
                 return NotFound();
