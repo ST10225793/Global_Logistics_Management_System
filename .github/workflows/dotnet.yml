@@ -22,9 +22,9 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Hardcoded direct path to bypass directory whitespace execution limits
+    # Using workspace variables ensures Linux reads the spaces as a single safe path string
     - name: Restore Project Dependencies
-      run: dotnet restore "./Global Logistics Management System.sln"
+      run: dotnet restore "${{ github.workspace }}/Global Logistics Management System.sln"
 
     - name: Build Solution
-      run: dotnet build "./Global Logistics Management System.sln" --configuration Release --no-restore
+      run: dotnet build "${{ github.workspace }}/Global Logistics Management System.sln" --configuration Release --no-restore
