@@ -22,9 +22,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # The "**/*.csproj" rule tells .NET to scan all subfolders dynamically, completely bypassing space bugs
+    # Removing arguments forces .NET to handle project discovery internally, bypassing Bash entirely
     - name: Restore Application Dependencies
-      run: dotnet restore **/*.csproj
+      run: dotnet restore
 
+    # Compiles the discovered projects while ignoring the broken relative paths in the solution file
     - name: Build Application Project
-      run: dotnet build **/*.csproj --configuration Release --no-restore --no-dependencies
+      run: dotnet build --configuration Release --no-restore
