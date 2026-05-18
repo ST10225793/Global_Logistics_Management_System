@@ -16,9 +16,6 @@ namespace Global_Logistics_Management_System.Models
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        public string Region { get; set; }
-
         // Navigation property
         public ICollection<Contract> Contracts { get; set; } = new List<Contract>();
     }
