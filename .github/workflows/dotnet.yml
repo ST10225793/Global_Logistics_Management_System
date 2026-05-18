@@ -22,9 +22,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Dynamically targets the first matching solution structure in the folder root
+    # Dynamically restores all dependencies across the entire workspace directory
     - name: Restore Project Dependencies
-      run: dotnet restore *.sln
+      run: dotnet restore
 
+    # Compiles both projects matching your exact folder structures perfectly
     - name: Build Solution
-      run: dotnet build *.sln --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore
