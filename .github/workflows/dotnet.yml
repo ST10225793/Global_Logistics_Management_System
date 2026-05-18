@@ -10,22 +10,22 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     
-    # Injects the environmental override flagged in your error log annotations
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-    # Upgraded runner actions to maintain cross-compatibility with cloud image deprecations
-    - uses: actions/checkout@v4
-    
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
     - name: Setup .NET SDK Environment
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x'
 
+    # This searches your repository automatically for any solution (.sln) file to prevent path drops
     - name: Restore Project Dependencies
-      run: dotnet restore
+      run: dotnet restore $(find . -name "*.sln" | head -n 1)
 
-    # Build verification block compiles the system cleanly to secure your rubric requirement marks
+    # Compiles the solution matching your repository configuration precisely
     - name: Build Solution
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build $(find . -name "*.sln" | head -n 1) --configuration Release --no-restore
