@@ -22,9 +22,9 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # Direct target paths using forward-slashes for seamless cross-platform compatibility
-    - name: Restore Project Dependencies
-      run: dotnet restore "Global Logistics Management System/Global Logistics Management System.sln"
+    # The '"..."' pattern forces Linux bash to honor space characters as a single path string
+    - name: Restore Application Dependencies
+      run: dotnet restore '"Global Logistics Management System/Global Logistics Management System.csproj"'
 
-    - name: Build Solution
-      run: dotnet build "Global Logistics Management System/Global Logistics Management System.sln" --configuration Release --no-restore
+    - name: Build Application Project
+      run: dotnet build '"Global Logistics Management System/Global Logistics Management System.csproj"' --configuration Release --no-restore --no-dependencies
