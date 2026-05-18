@@ -22,11 +22,11 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
-    # The pipe character (|) preserves the literal inner quotes for the Linux shell execution
+    # The block pipe (|) tells Bash to look directly at the root file without adding extra folders
     - name: Restore Application Dependencies
       run: |
-        dotnet restore "Global Logistics Management System/Global Logistics Management System.csproj"
+        dotnet restore "Global Logistics Management System.csproj"
 
     - name: Build Application Project
       run: |
-        dotnet build "Global Logistics Management System/Global Logistics Management System.csproj" --configuration Release --no-restore
+        dotnet build "Global Logistics Management System.csproj" --configuration Release --no-restore
