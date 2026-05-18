@@ -72,8 +72,9 @@ namespace Global_Logistics_Management_System.Controllers
             }
             else if (contract.Status == ContractStatus.Expired || contract.Status == ContractStatus.OnHold)
             {
-                // This message will display at the top of your Create page in the validation summary block
-                ModelState.AddModelError("", $"Cannot create a service request. The parent contract is currently {contract.Status}.");
+                // Adding this allows the new SweetAlert script in the layout to catch the message and pop up nicely!
+                TempData["ToastError"] = $"Cannot create a service request. The parent contract is currently {contract.Status}.";
+                ModelState.AddModelError("", $"The parent contract is currently {contract.Status}.");
             }
 
             else

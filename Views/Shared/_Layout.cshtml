@@ -8,12 +8,113 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Global_Logistics_Management_System.styles.css" asp-append-version="true" />
+
+    <style>
+        /* Global Palette Override */
+        body {
+            background-color: #FFF0F5; /* Lavender Blush (soft pink background) */
+            color: #4A4A4A;
+            font-family: 'Comic Sans MS', 'Segoe UI', cursive, sans-serif; /* Playful theme font choice */
+        }
+
+        /* Navigation Bar Theme */
+        .navbar-custom {
+            background-color: #FFB6C1 !important; /* Light Pink Header Bar */
+            border-bottom: 4px solid #FF69B4; /* Hot Pink Accent Border Line */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .navbar-custom .navbar-brand {
+            color: #FFFFFF !important;
+            font-weight: bold;
+            text-shadow: 2px 2px #FF1493; /* Magenta shadow text drop */
+        }
+        .navbar-custom .nav-link {
+            color: #FFFFFF !important;
+            font-weight: 600;
+            padding: 8px 16px !important;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .navbar-custom .nav-link:hover {
+            background-color: #FF69B4 !important; /* Bright pink highlight bubble */
+            color: #FFFFFF !important;
+        }
+
+        /* Tables & Content Cards */
+        .table {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: separate;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+        }
+        .table thead {
+            background-color: #FF69B4; /* Magenta header tracking row */
+            color: white;
+        }
+        .table thead th {
+            color: white !important;
+            border: none;
+        }
+
+        /* Form Controls & Styling Inputs */
+        .form-control, .form-select {
+            border: 2px solid #FFB6C1;
+            border-radius: 10px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #FF69B4;
+            box-shadow: 0 0 0 0.25rem rgba(255, 105, 180, 0.25);
+        }
+
+        /* Interactive Buttons Mapping */
+        .btn-primary {
+            background-color: #FF69B4 !important; /* Hot Pink Main Actions */
+            border-color: #FF69B4 !important;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(255, 105, 180, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: #FF1493 !important; /* Deeper magenta trigger */
+            border-color: #FF1493 !important;
+        }
+        .btn-link, a {
+            color: #FF69B4;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        a:hover {
+            color: #FF1493;
+        }
+
+        /* Card Decorative Elements */
+        .card {
+            border: 2px solid #FFB6C1 !important;
+            border-radius: 15px !important;
+            background-color: #FFFFFF !important;
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.2);
+        }
+        .bg-light {
+            background-color: #FFF5F7 !important; /* Soft interior highlight fill */
+        }
+
+        /* Footer custom theme wrapping */
+        footer {
+            background-color: #FFB6C1;
+            border-top: 3px solid #FF69B4;
+            color: white !important;
+        }
+        footer a {
+            color: white !important;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-custom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Global_Logistics_Management_System</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">🎀 GLMS Prototype</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,27 +122,36 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Clients" asp-action="Index">Clients Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Contracts" asp-action="Index">Manage Contracts</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="ServiceRequests" asp-action="Index">Service Requests</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Global_Logistics_Management_System - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-5 py-3">
+        <div class="container text-center text-white">
+            &copy; 2026 - Global_Logistics_Management_System - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a> 🎀
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
