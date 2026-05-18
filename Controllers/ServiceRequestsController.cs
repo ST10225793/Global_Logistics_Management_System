@@ -194,5 +194,16 @@ namespace Global_Logistics_Management_System.Controllers
         {
             return _context.ServiceRequests.Any(e => e.RequestId == id);
         }
+
+        // GET: ServiceRequests/GetLiveExchangeRate
+        [HttpGet]
+        public async Task<IActionResult> GetLiveExchangeRate()
+        {
+            // Uses the HttpClient service we created earlier to hit the live API
+            decimal liveRate = await _currencyService.GetZarRateAsync("USD");
+
+            // Returns a lightweight JSON package to the browser
+            return Json(new { rate = liveRate });
+        }
     }
 }
