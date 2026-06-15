@@ -1,46 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Global_Logistics_Management_System.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Json;
 using Global_Logistics_Management_System.Models;
 
 namespace Global_Logistics_Management_System.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        public ClientsController(ApplicationDbContext context)
+        // This is the default port local Web APIs use. We will double-check yours when we run it!
+        private readonly string _apiBaseUrl = "https://localhost:7200/api/ClientsApi";
+
+        public ClientsController(IHttpClientFactory httpClientFactory)
         {
-            _context = context;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
-        }
-
-        // GET: Clients/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            try
             {
-                return NotFound();
+                // Grabs raw JSON list from backend and maps it directly to your Client models
+                var clients = await _httpClient.GetFromJsonAsync<List<Client>>(_apiBaseUrl);
+                return View(clients ?? new List<Client>());
             }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.ClientId == id);
-            if (client == null)
+            catch (Exception)
             {
-                return NotFound();
+                ModelState.AddModelError("", "Unable to connect to the backend logistics API service.");
+                return View(new List<Client>());
             }
-
-            return View(client);
         }
 
         // GET: Clients/Create
@@ -50,108 +39,32 @@ namespace Global_Logistics_Management_System.Controllers
         }
 
         // POST: Clients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ClientId,Name,Email")] Client client)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(client);
-        }
-
-        // GET: Clients/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                return View(client);
             }
 
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
+            try
             {
-                return NotFound();
-            }
-            return View(client);
-        }
+                // Forwards your new client payload directly to the API backend
+                var response = await _httpClient.PostAsJsonAsync(_apiBaseUrl, client);
 
-        // POST: Clients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClientId,Name,Email")] Client client)
-        {
-            if (id != client.ClientId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (response.IsSuccessStatusCode)
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.ClientId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Network error encountered while sending client records.");
+            }
+
+            ModelState.AddModelError("", "Server error encountered while registering client payload.");
             return View(client);
-        }
-
-        // GET: Clients/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.ClientId == id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return View(client);
-        }
-
-        // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var client = await _context.Clients.FindAsync(id);
-            if (client != null)
-            {
-                _context.Clients.Remove(client);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.ClientId == id);
         }
     }
 }
