@@ -15,7 +15,7 @@ namespace Global_Logistics_Management_System.Controllers
         private readonly HttpClient _httpClient;
 
         // Use the exact same API port number you looked up in Step 6!
-        private readonly string _apiBaseUrl = "https://localhost:7143/api/ContractsApi";
+        private readonly string _apiBaseUrl = "https://localhost:7230/api/ContractsApi";
 
         // The constructor now takes the standard framework logger and the web connection agent
         public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
