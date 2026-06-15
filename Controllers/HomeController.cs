@@ -1,9 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Global_Logistics_Management_System.Data;
 using Global_Logistics_Management_System.Models;
 
 namespace Global_Logistics_Management_System.Controllers
@@ -11,25 +12,37 @@ namespace Global_Logistics_Management_System.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        // Combined constructor to handle both framework logging and our SQL Database Context
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        // Use the exact same API port number you looked up in Step 6!
+        private readonly string _apiBaseUrl = "https://localhost:7143/api/ContractsApi";
+
+        // The constructor now takes the standard framework logger and the web connection agent
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _context = context;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         // GET: Home/Index
         public async Task<IActionResult> Index()
         {
-            // Fetch top 5 contracts including relational Client data for the summary dashboard layout
-            var dashboardContracts = await _context.Contracts
-                                                  .Include(c => c.Client)
-                                                  .Take(5)
-                                                  .ToListAsync();
+            try
+            {
+                // Asks the Web API for the contracts list over the local network port
+                var contracts = await _httpClient.GetFromJsonAsync<List<Contract>>(_apiBaseUrl);
 
-            return View(dashboardContracts);
+                // Takes the top 5 records to keep the frontend view layout looking neat
+                var dashboardContracts = contracts ?? new List<Contract>();
+                dashboardContracts = dashboardContracts.FindAll(c => true).GetRange(0, Math.Min(5, dashboardContracts.Count));
+
+                return View(dashboardContracts);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Could not retrieve dashboard contracts from the backend service.");
+                return View(new List<Contract>());
+            }
         }
 
         // GET: Home/Privacy
