@@ -9,7 +9,7 @@ namespace Global_Logistics_Management_System.Controllers
         private readonly HttpClient _httpClient;
 
         // This is the default port local Web APIs use. We will double-check yours when we run it!
-        private readonly string _apiBaseUrl = "https://localhost:7200/api/ClientsApi";
+        private readonly string _apiBaseUrl = "https://localhost:5149/api/ClientsApi";
 
         public ClientsController(IHttpClientFactory httpClientFactory)
         {
